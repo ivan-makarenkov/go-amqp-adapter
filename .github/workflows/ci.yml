@@ -19,6 +19,18 @@ jobs:
       - name: Test
         run: go test -short ./...
 
+  examples:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: examples/go.mod
+
+      - name: Build examples
+        run: make examples
+
   lint:
     runs-on: ubuntu-latest
     steps:

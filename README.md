@@ -26,7 +26,28 @@ This library and [go-failedjobs](https://github.com/ivan-makarenkov/go-failedjob
 - Header/context plumbing (`WithPublishHeadersBuilder` / `WithConsumeHeadersExtractor`)
 - [`otel`](otel/) subpackage for correlation ID and OpenTelemetry propagation
 
+## Examples
+
+Runnable programs live in [`examples/`](examples/):
+
+```bash
+docker compose -f examples/docker-compose.yml up -d
+go run -C examples ./basic-consumer
+```
+
+| Directory | Topic |
+|-----------|--------|
+| `basic-consumer` | Publish and consume one queue |
+| `publisher-confirms` | `Publish` waits for broker ack |
+| `retry` | Delay-queue retries and `WithFailHandler` |
+| `multiple-consumers` | `AddConsumerN` parallelism |
+| `failed-jobs` | Persist permanent failures and republish |
+| `graceful-shutdown` | `Shutdown` waits for in-flight handlers |
+
+See [examples/README.md](examples/README.md) for details.
+
 ## Quick start
+
 
 ```go
 package main

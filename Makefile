@@ -30,6 +30,13 @@ test-functional-down: ## Stop RabbitMQ from tests/docker-compose.yml
 lint: ## Run golangci-lint
 	golangci-lint run ./... --config .golangci.yml
 
+.PHONY: examples
+examples: ## Build example programs
+	@set -e; \
+	for p in basic-consumer publisher-confirms retry multiple-consumers failed-jobs graceful-shutdown; do \
+		go -C examples build -o /dev/null ./$$p; \
+	done
+
 .PHONY: format
 format: ## Format with goimports
 	goimports -l -w .

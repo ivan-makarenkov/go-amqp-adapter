@@ -1,0 +1,39 @@
+# go-amqp-adapter
+
+> Go adapter over amqp091-go: publish and consume RabbitMQ messages with publisher confirms, auto-reconnect, delayed retry (delay queue / DLX), and optional OpenTelemetry / correlation-id header propagation. Module: `github.com/ivan-makarenkov/go-amqp-adapter`. Package import name: `amqpadapter` (often aliased as `mq`).
+
+Designed to pair with [go-failedjobs](https://github.com/ivan-makarenkov/go-failedjobs) as a Laravel-style retry → `failed_jobs` → `queue:retry` replacement: this library does in-broker retries; permanent failures go through `WithFailHandler` (wire to `go-failedjobs.GetFailedJobHandler`).
+
+Key rules for agents:
+
+- Construct with `mq.New(Config, ...Option)`. `WithFailHandler` is **required** if any `QueueItem.Retry` is non-nil.
+- Call `AddConsumer` / `AddConsumerN` **before** `InitConsumer`. Prefetch QoS is 1 per channel. `AddConsumerN(N)` opens N separate AMQP connections.
+- In retry mode, return `mq.Retry(err)` for delayed reprocessing; return a plain error for final fail (calls fail handler, then acks).
+- Publisher connects lazily on first `Publish`. `Shutdown` closes connections first, then waits for in-flight handlers.
+- `*slog.Logger` satisfies `Logger`. Default logger is a no-op.
+
+## Docs
+
+- [Examples](https://github.com/ivan-makarenkov/go-amqp-adapter/tree/main/examples): Runnable programs for consume, confirms, retry, multiple consumers, failed jobs, graceful shutdown
+- [README](https://raw.githubusercontent.com/ivan-makarenkov/go-amqp-adapter/main/README.md): Features, quick start, config, retry, consumers, options, otel example
+- [Package overview (doc.go)](https://raw.githubusercontent.com/ivan-makarenkov/go-amqp-adapter/main/doc.go): High-level package purpose
+- [pkg.go.dev](https://pkg.go.dev/github.com/ivan-makarenkov/go-amqp-adapter): Generated Go API docs
+
+## API source
+
+- [Queue interface & PublishMessage](https://raw.githubusercontent.com/ivan-makarenkov/go-amqp-adapter/main/interfaces.go): Public `Queue` contract, handlers, header builders
+- [Config / QueueItem / RetryConfig](https://raw.githubusercontent.com/ivan-makarenkov/go-amqp-adapter/main/config.go): Connection delays and per-queue retry / consumer-only flags
+- [Options](https://raw.githubusercontent.com/ivan-makarenkov/go-amqp-adapter/main/options.go): `WithLogger`, `WithFailHandler`, `WithPublishHeadersBuilder`, `WithConsumeHeadersExtractor`, `FailedJob`
+- [New / Publish / consumers / Shutdown](https://raw.githubusercontent.com/ivan-makarenkov/go-amqp-adapter/main/queue.go): Main entry points
+- [Retry helpers](https://raw.githubusercontent.com/ivan-makarenkov/go-amqp-adapter/main/retryable.go): `Retry`, `IsRetryable`, `RetryableError`
+- [otel propagation](https://raw.githubusercontent.com/ivan-makarenkov/go-amqp-adapter/main/otel/propagation.go): Correlation ID + W3C trace headers for publish/consume
+
+## Related
+
+- [go-failedjobs](https://github.com/ivan-makarenkov/go-failedjobs): Persist exhausted jobs and republish via `POST /retry-task`
+- [go-failedjobs llms.txt](https://raw.githubusercontent.com/ivan-makarenkov/go-failedjobs/main/llms.txt): Agent guide for the companion library
+
+## Optional
+
+- [amqp091-go](https://github.com/rabbitmq/amqp091-go): Underlying RabbitMQ client
+- [LICENSE](https://raw.githubusercontent.com/ivan-makarenkov/go-amqp-adapter/main/LICENSE)
