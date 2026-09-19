@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	mq "github.com/ivan-makarenkov/amqp-adapter"
+	mq "github.com/ivan-makarenkov/go-amqp-adapter"
 )
 
 func TestRetry_MessageRetriedUntilSuccess(t *testing.T) {

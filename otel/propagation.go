@@ -5,7 +5,7 @@ package otel
 import (
 	"context"
 
-	"github.com/ivan-makarenkov/amqp-adapter"
+	"github.com/ivan-makarenkov/go-amqp-adapter"
 	"go.opentelemetry.io/otel/propagation"
 )
 

@@ -1,4 +1,4 @@
-module github.com/ivan-makarenkov/amqp-adapter
+module github.com/ivan-makarenkov/go-amqp-adapter
 
 go 1.22.0
 

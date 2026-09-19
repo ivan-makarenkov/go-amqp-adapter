@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	mq "github.com/ivan-makarenkov/amqp-adapter"
+	mq "github.com/ivan-makarenkov/go-amqp-adapter"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
