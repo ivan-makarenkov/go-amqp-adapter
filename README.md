@@ -8,6 +8,14 @@ go get github.com/ivan-makarenkov/amqp-adapter
 
 Package: `amqpadapter`.
 
+## Together with go-failedjobs
+
+This library and [go-failedjobs](https://github.com/ivan-makarenkov/go-failedjobs) were designed to be used together as a replacement for Laravel's retry-through-queue mechanism (`tries` / delayed retries → `failed_jobs` → `php artisan queue:retry`).
+
+- **amqp-adapter** handles in-broker retries (delay queue / DLX) — the analogue of Laravel's automatic job retries.
+- When retries are exhausted (or the handler returns a non-retryable error), `WithFailHandler` persists the payload instead of Laravel's `failed_jobs` table. Wire it to `go-failedjobs` via `GetFailedJobHandler`.
+- **go-failedjobs** stores those rows in MySQL/Postgres and republishes selected IDs to RabbitMQ (`POST /retry-task`) — the analogue of `php artisan queue:retry`.
+
 ## Features
 
 - Lazy publisher connect on first `Publish`
